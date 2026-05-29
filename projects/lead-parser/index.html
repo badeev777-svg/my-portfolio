@@ -180,6 +180,29 @@
       transition: opacity .2s;
     }
 
+    .header-cta {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .demo-btn {
+      display: inline-block;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #7c6cff, #00d4ff);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: opacity .2s, transform .2s;
+    }
+
+    .demo-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
     .back-link:hover { opacity: .8; }
   </style>
 </head>
@@ -190,6 +213,9 @@
   <header>
     <h1>🔍 Lead Parser</h1>
     <p class="subtitle">Автоматический сбор заявок из Telegram, FL.ru и Habr Freelance</p>
+    <div class="header-cta">
+      <a href="/leads/" class="demo-btn">🚀 Открыть живое демо</a>
+    </div>
   </header>
 
   <div class="demo-section">
