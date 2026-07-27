@@ -1,12 +1,31 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx vercel *)",
       "Bash(git -C \"c:/Users/User/OneDrive/Документы/Projekt/my-first-projekt/my-portfolio\" log --oneline -5)",
       "Bash(git -C \"c:/Users/User/OneDrive/Документы/Projekt/my-first-projekt/my-portfolio\" show 2aee6bd --stat)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "PowerShell(Resolve-DnsName \"portfolio.xn--e1afmapc8d.xn--p1acf\" -ErrorAction SilentlyContinue)",
+      "PowerShell(Resolve-DnsName \"xn--e1afmapc8d.xn--p1acf\" -ErrorAction SilentlyContinue)",
+      "PowerShell(nslookup portfolio.xn--e1afmapc8d.xn--p1acf 8.8.8.8 2>&1)",
+      "PowerShell(nslookup xn--e1afmapc8d.xn--p1acf 8.8.8.8 2>&1)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://portfolio.xn--e1afmapc8d.xn--p1acf\" -TimeoutSec 10 -MaximumRedirection 5 -ErrorAction Stop; Write-Host \"Status: $\\($r.StatusCode\\)\"; Write-Host \"URL: $\\($r.BaseResponse.ResponseUri\\)\" } catch { Write-Host \"Error: $_\" })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"https://portfolio.xn--e1afmapc8d.xn--p1acf\" -TimeoutSec 10 -MaximumRedirection 5 -SkipCertificateCheck -ErrorAction Stop; Write-Host \"Status: $\\($r.StatusCode\\)\" } catch { Write-Host \"HTTPS Error: $_\" })",
+      "Bash(nslookup нейро.бизнесгенератор.рф)",
+      "Bash(nslookup xn--5caikgj.xn--0cabghbakh0cdnwcgv.xn--hdai 8.8.8.8)",
+      "Bash(curl -s -I --max-time 10 \"http://xn--5caikgj.xn--0cabghbakh0cdnwcgv.xn--hdai\")",
+      "PowerShell(Resolve-DnsName \"xn--5caikgj.xn--0cabghbakh0cdnwcgv.xn--hdai\" -Server 8.8.8.8 -Type A 2>&1)",
+      "PowerShell(Resolve-DnsName \"xn--5caikgj.xn--0cabghbakh0cdnwcgv.xn--hdai\" -Server 8.8.8.8 -Type ALL 2>&1)",
+      "PowerShell(curl -s --max-time 10 -I \"https://xn--5caikgj.xn--0cabghbakh0cdnwcgv.xn--hdai\" 2>&1)",
+      "PowerShell(curl -s --max-time 10 -L \"http://198.18.8.10\" -H \"Host: xn--5caikgj.xn--0cabghbakh0cdnwcgv.xn--hdai\" 2>&1)",
+      "Bash(curl -s \"https://api.github.com/users/badeev777-svg/repos?per_page=20\")",
+      "Bash(python3 -c \"import sys,json; repos=json.load\\(sys.stdin\\); [print\\(r['name'], r.get\\('homepage',''\\), r['html_url']\\) for r in repos]\")",
+      "Bash(curl -s \"https://api.github.com/repos/badeev777-svg/seo-landing/pages\")",
+      "Bash(curl -s \"https://api.github.com/repos/badeev777-svg/badeev777-svg.github.io/pages\")",
+      "Bash(curl -s \"https://api.github.com/repos/badeev777-svg/seo-landing/contents/\")",
+      "Bash(python3 -c \"import sys,json; items=json.load\\(sys.stdin\\); [print\\(i['name']\\) for i in items if isinstance\\(items, list\\)]\")",
+      "Bash(curl -s \"https://api.github.com/repos/badeev777-svg/badeev777-svg.github.io/contents/\")"
     ]
   }
 }

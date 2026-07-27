@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aleks Agent — Кодинг-агент через Telegram</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #08090e;
+      --bg2:       #0f1117;
+      --card:      #141620;
+      --accent:    #7c6cff;
+      --accent2:   #00d4ff;
+      --text:      #e8eaf0;
+      --muted:     #7a7f96;
+      --border:    rgba(124,108,255,.18);
+      --radius:    14px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+    .tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .03em;
+      background: rgba(124,108,255,.12);
+      color: #a49fff;
+      border: 1px solid rgba(124,108,255,.25);
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    /* HEADER */
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(8,9,14,.85);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; }
+    .back-link { color: var(--muted); text-decoration: none; font-size: .9rem; transition: color .25s; }
+    .back-link:hover { color: var(--text); }
+
+    /* HERO */
+    section { padding: 72px 0; }
+    .hero { min-height: 55vh; display: flex; align-items: center; }
+    .project-type { font-size: .85rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent2); margin-bottom: 12px; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 16px; }
+    .subtitle { font-size: 1.15rem; color: var(--muted); max-width: 640px; margin-bottom: 32px; }
+    .tags { display: flex; flex-wrap: wrap; margin-bottom: 8px; }
+
+    /* SECTIONS SHARED */
+    .section-tag { font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+    .section-title { font-size: 2rem; font-weight: 800; margin-bottom: 14px; }
+    .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 560px; }
+
+    /* FEATURES */
+    #about { background: var(--bg2); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(124,108,255,.4);
+      box-shadow: 0 12px 40px rgba(124,108,255,.12);
+    }
+    .feature-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p { font-size: .9rem; color: var(--muted); }
+
+    /* TECH STACK */
+    #tech { background: var(--bg); }
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 40px; }
+    .tech-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      transition: transform .25s, border-color .25s;
+    }
+    .tech-item:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .tech-item .icon { font-size: 2rem; margin-bottom: 12px; }
+    .tech-item h4 { font-weight: 700; margin-bottom: 6px; }
+    .tech-item p { font-size: .85rem; color: var(--muted); }
+
+    /* ARCHITECTURE / COMMANDS BLOCK */
+    .architecture-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-top: 32px;
+    }
+    .arch-item { display: flex; gap: 20px; margin-bottom: 24px; }
+    .arch-item:last-child { margin-bottom: 0; }
+    .arch-label { font-weight: 700; color: var(--accent); min-width: 160px; }
+    .arch-desc { color: var(--muted); }
+
+    /* FOOTER */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); text-align: center; color: var(--muted); font-size: .82rem; }
+
+    /* RESPONSIVE */
+    @media (max-width: 760px) {
+      section { padding: 48px 0; }
+      h1 { font-size: 1.8rem; }
+      .arch-item { flex-direction: column; gap: 6px; }
+      .arch-label { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container header-inner">
+    <a href="../.." class="back-link">← Вернуться</a>
+    <div></div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="project-type">Telegram Bot / AI Agent</div>
+    <h1>Aleks Agent</h1>
+    <p class="subtitle">Telegram-бот для управления кодинг-агентом (Claude Agent SDK) прямо с телефона. Пишу код, читаю логи и запускаю деплой из чата — без ноутбука под рукой. Работает на отдельном VPS.</p>
+    <div class="tags">
+      <span class="tag">Python</span>
+      <span class="tag">Telegram Bot API</span>
+      <span class="tag">Claude Agent SDK</span>
+      <span class="tag">asyncio</span>
+      <span class="tag">SQLite</span>
+      <span class="tag">systemd / VPS</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="about">
+  <div class="container">
+    <div class="section-tag">Функции</div>
+    <h2 class="section-title">Что умеет бот</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>Чат с агентом</h3>
+        <p>Пишешь задачу текстом в Telegram — агент читает код, вносит правки, запускает команды и присылает результат.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📁</div>
+        <h3>Мультипроектность</h3>
+        <p>Список проектов на VPS и переключение активного через /projects и /project — у каждого своя сессия и история.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Память сессии</h3>
+        <p>Диалог с агентом продолжается по session_id — не нужно каждый раз объяснять контекст заново.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚠️</div>
+        <h3>Подтверждение рисков</h3>
+        <p>Опасные действия (git push, sudo, docker, systemctl restart, rm -rf, правки .env/secrets) требуют инлайн-подтверждения кнопкой перед выполнением.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Авторизация</h3>
+        <p>Бот отвечает только владельцу по allowed_user_id — сторонний доступ к агенту и файлам сервера исключён.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔁</div>
+        <h3>Устойчивость к сбоям</h3>
+        <p>Повторные попытки с экспоненциальной задержкой на временных ошибках API, без бессмысленных ретраев при биллинг-ошибках.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="tech">
+  <div class="container">
+    <div class="section-tag">Технологический стек</div>
+    <h2 class="section-title">Используемые технологии</h2>
+    <div class="tech-grid">
+      <div class="tech-item">
+        <div class="icon">🐍</div>
+        <h4>Python 3.11+</h4>
+        <p>Асинхронный backend на asyncio</p>
+      </div>
+      <div class="tech-item">
+        <div class="icon">💬</div>
+        <h4>python-telegram-bot</h4>
+        <p>Обработка сообщений и inline-кнопок подтверждения</p>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🤖</div>
+        <h4>Claude Agent SDK</h4>
+        <p>Кодинг-агент, читающий и правящий проект по запросу</p>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🗄️</div>
+        <h4>SQLite (StateStore)</h4>
+        <p>Активный проект, session_id и настройки пользователя</p>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🛡️</div>
+        <h4>Risk-фильтр</h4>
+        <p>Разбор bash-команд на риск: git push, sudo, docker, rm -rf и вложенные вызовы</p>
+      </div>
+      <div class="tech-item">
+        <div class="icon">⚙️</div>
+        <h4>systemd</h4>
+        <p>Бот работает как сервис на VPS, автозапуск и логирование в файл</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMANDS -->
+<section style="background: var(--bg2);">
+  <div class="container">
+    <div class="section-tag">Управление</div>
+    <h2 class="section-title">Команды бота</h2>
+    <div class="architecture-block">
+      <div class="arch-item">
+        <div class="arch-label">/projects</div>
+        <div class="arch-desc">Показать список доступных проектов на сервере.</div>
+      </div>
+      <div class="arch-item">
+        <div class="arch-label">/project &lt;имя&gt;</div>
+        <div class="arch-desc">Сделать проект активным для текущего диалога.</div>
+      </div>
+      <div class="arch-item">
+        <div class="arch-label">[текст]</div>
+        <div class="arch-desc">Любое сообщение — задача агенту в контексте активного проекта.</div>
+      </div>
+      <div class="arch-item">
+        <div class="arch-label">✅ / ❌</div>
+        <div class="arch-desc">Инлайн-кнопки подтверждения перед рискованным действием агента.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2026 Aleks Agent — кодинг-агент в кармане через Telegram</p>
+  </div>
+</footer>
+
+</body>
+</html>
