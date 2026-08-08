@@ -416,6 +416,70 @@
     .step p { font-size: .85rem; color: var(--muted); }
 
     /* ═══════════════════════════════════════════════════
+       GUARANTEES
+    ═══════════════════════════════════════════════════ */
+    #guarantees { background: var(--bg2); }
+    .guarantees-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 52px;
+    }
+    .guarantee-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+    .guarantee-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(124,108,255,.4);
+      box-shadow: 0 12px 40px rgba(124,108,255,.12);
+    }
+    .guarantee-icon { font-size: 1.7rem; margin-bottom: 14px; }
+    .guarantee-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .guarantee-card p { font-size: .86rem; color: var(--muted); }
+
+    /* ═══════════════════════════════════════════════════
+       FAQ
+    ═══════════════════════════════════════════════════ */
+    .faq-list { margin-top: 52px; max-width: 760px; }
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .faq-question {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px;
+      cursor: pointer;
+      font-weight: 600; font-size: .95rem;
+      user-select: none;
+    }
+    .faq-question .faq-plus {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; color: var(--accent);
+      transition: transform .25s;
+    }
+    .faq-item.open .faq-plus { transform: rotate(45deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s ease;
+    }
+    .faq-answer p {
+      padding: 0 24px 20px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    /* ═══════════════════════════════════════════════════
        CTA
     ═══════════════════════════════════════════════════ */
     #cta {
@@ -608,6 +672,7 @@
       <li><a href="#projects">Проекты</a></li>
       <li><a href="#skills">Навыки</a></li>
       <li><a href="#process">Процесс</a></li>
+      <li><a href="#faq">FAQ</a></li>
       <li><a href="#cta" class="nav-cta">Написать</a></li>
     </ul>
     <div class="burger" id="burger" onclick="toggleMenu()">
@@ -1133,6 +1198,7 @@
         <div class="tech-pill"><span class="ico">🛠️</span> Android Studio</div>
         <div class="tech-pill"><span class="ico">🐍</span> Python</div>
         <div class="tech-pill"><span class="ico">🤖</span> ChatGPT API</div>
+        <div class="tech-pill"><span class="ico">🎭</span> Claude Code API</div>
         <div class="tech-pill"><span class="ico">🧠</span> Нейросети</div>
         <div class="tech-pill"><span class="ico">🔍</span> SEO</div>
         <div class="tech-pill"><span class="ico">📊</span> CRM</div>
@@ -1188,6 +1254,93 @@
         </div>
         <h4>Сдача</h4>
         <p>Тестируем, вношу правки и передаю готовый продукт с документацией</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── GUARANTEES ────────────────────────────────────────────── -->
+<section id="guarantees">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-tag">Почему без рисков</div>
+      <h2 class="section-title">Гарантии</h2>
+      <p class="section-sub">Работаю так, чтобы вам не пришлось платить вслепую</p>
+    </div>
+    <div class="guarantees-grid">
+      <div class="guarantee-card fade-up">
+        <div class="guarantee-icon">💳</div>
+        <h3>Оплата только после сдачи</h3>
+        <p>Предоплата не нужна — платите, когда результат уже готов и работает.</p>
+      </div>
+      <div class="guarantee-card fade-up">
+        <div class="guarantee-icon">🔁</div>
+        <h3>Дорабатываю до результата</h3>
+        <p>Вношу правки по ходу проекта, пока итог не будет вас устраивать.</p>
+      </div>
+      <div class="guarantee-card fade-up">
+        <div class="guarantee-icon">🔗</div>
+        <h3>Работающие демо, не картинки</h3>
+        <p>15+ живых проектов — можно открыть и потрогать до заказа.</p>
+      </div>
+      <div class="guarantee-card fade-up">
+        <div class="guarantee-icon">🎯</div>
+        <h3>Работаю лично, без посредников</h3>
+        <p>Прямая связь со мной на всех этапах — без менеджеров-прокладок.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ───────────────────────────────────────────────────── -->
+<section id="faq">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-tag">Частые вопросы</div>
+      <h2 class="section-title">FAQ</h2>
+    </div>
+    <div class="faq-list fade-up">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Сколько стоит проект?
+          <span class="faq-plus">+</span>
+        </div>
+        <div class="faq-answer"><p>Зависит от задачи. Называю цену после короткого брифа — обычно в течение дня.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Когда и как платить?
+          <span class="faq-plus">+</span>
+        </div>
+        <div class="faq-answer"><p>После сдачи проекта. Предоплата не нужна.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Что если результат не устроит?
+          <span class="faq-plus">+</span>
+        </div>
+        <div class="faq-answer"><p>Дорабатываю в рамках задачи, пока результат вас не устроит.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Работаете по договору?
+          <span class="faq-plus">+</span>
+        </div>
+        <div class="faq-answer"><p>Работаю по устной договорённости.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Сколько занимает разработка?
+          <span class="faq-plus">+</span>
+        </div>
+        <div class="faq-answer"><p>Зависит от сложности проекта. Точные сроки называю на этапе брифа.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          После сдачи поддержка есть?
+          <span class="faq-plus">+</span>
+        </div>
+        <div class="faq-answer"><p>Да, остаюсь на связи по вопросам после сдачи проекта.</p></div>
       </div>
     </div>
   </div>
@@ -1294,6 +1447,21 @@
     });
   }, { threshold: 0.3 });
   document.querySelectorAll('.skills-list').forEach(el => skillsObserver.observe(el));
+
+  /* FAQ accordion */
+  function toggleFaq(question) {
+    const item = question.closest('.faq-item');
+    const answer = item.querySelector('.faq-answer');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.faq-answer').style.maxHeight = null;
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  }
 
   /* Contact form */
   function submitForm(e) {
