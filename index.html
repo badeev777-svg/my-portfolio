@@ -113,6 +113,14 @@
     }
     .hero-bg {
       position: absolute; inset: 0; z-index: 0;
+      width: 100%; height: 100%;
+      display: none;
+      opacity: .38;
+      will-change: transform, opacity;
+      transition: transform .3s ease-out, opacity .6s ease;
+    }
+    .hero-bg-fallback {
+      position: absolute; inset: 0; z-index: 0;
       background:
         radial-gradient(ellipse 700px 600px at 70% 40%, rgba(124,108,255,.14) 0%, transparent 70%),
         radial-gradient(ellipse 500px 400px at 20% 70%, rgba(0,212,255,.12) 0%, transparent 70%);
@@ -683,7 +691,8 @@
 
 <!-- ─── HERO ─────────────────────────────────────────────────── -->
 <section id="hero">
-  <div class="hero-bg"></div>
+  <canvas class="hero-bg" id="heroShaderCanvas" aria-hidden="true"></canvas>
+  <div class="hero-bg-fallback" id="heroShaderFallback" aria-hidden="true"></div>
   <div class="hero-grid"></div>
   <div class="container">
     <div class="hero-content fade-up">
@@ -1475,6 +1484,160 @@
     document.getElementById('contact-form').style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
   }
+
+  /* ── Живой градиент в hero (свой WebGL-шейдер, без внешних библиотек) ── */
+  (function initHeroShader() {
+    const canvas = document.getElementById('heroShaderCanvas');
+    const fallback = document.getElementById('heroShaderFallback');
+    if (!canvas || !fallback) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isWeakDevice = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+                          (navigator.deviceMemory && navigator.deviceMemory <= 4);
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+
+    function showFallback() {
+      canvas.style.display = 'none';
+      fallback.style.display = 'block';
+    }
+
+    // На слабых мобильных и при "уменьшить анимацию" — статичный CSS-градиент вместо шейдера
+    if (prefersReducedMotion || (isCoarsePointer && isWeakDevice)) {
+      showFallback();
+      return;
+    }
+
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) { showFallback(); return; }
+
+    const vertSrc = `
+      attribute vec2 aPos;
+      void main() { gl_Position = vec4(aPos, 0.0, 1.0); }
+    `;
+    const fragSrc = `
+      precision highp float;
+      uniform vec2 uRes;
+      uniform float uTime;
+      uniform vec3 uColor1;
+      uniform vec3 uColor2;
+      uniform vec3 uColor3;
+      uniform vec3 uColor4;
+
+      float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float noise(vec2 p) {
+        vec2 i = floor(p); vec2 f = fract(p);
+        float a = hash(i);
+        float b = hash(i + vec2(1.0, 0.0));
+        float c = hash(i + vec2(0.0, 1.0));
+        float d = hash(i + vec2(1.0, 1.0));
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+      }
+      float fbm(vec2 p) {
+        float v = 0.0; float amp = 0.5;
+        for (int i = 0; i < 4; i++) { v += amp * noise(p); p *= 2.0; amp *= 0.5; }
+        return v;
+      }
+
+      void main() {
+        vec2 uv = gl_FragCoord.xy / uRes.xy;
+        vec2 p = uv * 2.0 - 1.0;
+        p.x *= uRes.x / uRes.y;
+        float t = uTime * 0.045; /* спокойная скорость движения */
+
+        float n1 = fbm(p * 1.2 + vec2(t, -t * 0.6));
+        float n2 = fbm(p * 1.6 + vec2(-t * 0.4, t * 0.8) + 4.0);
+        float n3 = fbm(p * 0.8 - vec2(t * 0.3, t * 0.2) + 8.0);
+
+        vec3 col = mix(uColor1, uColor2, smoothstep(0.2, 0.8, n1));
+        col = mix(col, uColor3, smoothstep(0.35, 0.9, n2));
+        col = mix(col, uColor4, smoothstep(0.55, 1.0, n3));
+
+        /* лёгкая зернистость */
+        float grain = (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.035;
+        col += grain;
+
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `;
+
+    function compile(type, src) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, src);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        gl.deleteShader(shader);
+        return null;
+      }
+      return shader;
+    }
+
+    const vs = compile(gl.VERTEX_SHADER, vertSrc);
+    const fs = compile(gl.FRAGMENT_SHADER, fragSrc);
+    if (!vs || !fs) { showFallback(); return; }
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { showFallback(); return; }
+    gl.useProgram(program);
+
+    canvas.style.display = 'block';
+    fallback.style.display = 'none';
+
+    const posBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(program, 'aPos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes = gl.getUniformLocation(program, 'uRes');
+    const uTime = gl.getUniformLocation(program, 'uTime');
+    const uColor1 = gl.getUniformLocation(program, 'uColor1');
+    const uColor2 = gl.getUniformLocation(program, 'uColor2');
+    const uColor3 = gl.getUniformLocation(program, 'uColor3');
+    const uColor4 = gl.getUniformLocation(program, 'uColor4');
+
+    /* Цвета бренда: #7c6cff, #00d4ff, #a65cff, #4be2ff */
+    gl.uniform3f(uColor1, 0.486, 0.424, 1.0);
+    gl.uniform3f(uColor2, 0.0, 0.831, 1.0);
+    gl.uniform3f(uColor3, 0.651, 0.361, 1.0);
+    gl.uniform3f(uColor4, 0.294, 0.886, 1.0);
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    function resize() {
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let running = true;
+    let rafId = null;
+    const heroSection = document.getElementById('hero');
+    const observer = new IntersectionObserver((entries) => {
+      running = entries[0].isIntersecting;
+      if (running && !rafId) rafId = requestAnimationFrame(render);
+    });
+    if (heroSection) observer.observe(heroSection);
+    document.addEventListener('visibilitychange', () => {
+      running = !document.hidden && (heroSection ? heroSection.getBoundingClientRect().bottom > 0 : true);
+      if (running && !rafId) rafId = requestAnimationFrame(render);
+    });
+
+    function render(time) {
+      if (!running) { rafId = null; return; }
+      gl.uniform1f(uTime, time * 0.001);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      rafId = requestAnimationFrame(render);
+    }
+    rafId = requestAnimationFrame(render);
+  })();
 
   /* Active nav link on scroll */
   const sections = document.querySelectorAll('section[id]');
