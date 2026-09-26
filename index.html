@@ -613,23 +613,45 @@
     }
     .about-text h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; }
     .about-text p { color: var(--muted); font-size: .95rem; line-height: 1.75; margin-bottom: 12px; }
-    .about-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+    .about-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; position: relative; isolation: isolate; }
+    /* цветное пятно позади плашек, чтобы blur давал видимый эффект стекла */
+    .about-chips::after {
+      content: '';
+      position: absolute;
+      top: -30px; left: -20px; right: -20px; bottom: -30px;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 15% 30%, rgba(124,108,255,.35), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(0,212,255,.3), transparent 55%);
+      filter: blur(30px);
+    }
     .about-chip {
       padding: 6px 14px; border-radius: 8px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.16);
+      background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.2);
       font-size: .82rem; color: var(--muted);
-      backdrop-filter: blur(14px) saturate(150%);
-      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      position: relative; overflow: hidden; isolation: isolate;
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.25),
+        inset 0 1px 0 rgba(255,255,255,.3),
         inset 0 -1px 5px rgba(0,0,0,.15);
-      transition: border-color .2s ease, color .2s ease, background .2s ease;
+      transition: border-color .2s ease, color .2s ease, background .2s ease, transform .2s ease;
     }
+    .about-chip::before {
+      content: '';
+      position: absolute; inset: 0; z-index: -1;
+      background: linear-gradient(115deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 40%);
+      transform: translateX(-60%);
+      transition: transform .6s ease;
+      pointer-events: none;
+    }
+    .about-chip:hover::before { transform: translateX(0%); }
     .about-chip:hover {
-      background: rgba(124,108,255,.14);
-      border-color: rgba(124,108,255,.4);
+      background: linear-gradient(135deg, rgba(124,108,255,.22), rgba(0,212,255,.14));
+      border-color: rgba(124,108,255,.45);
       color: var(--text);
+      transform: translateY(-2px);
     }
     @media (max-width: 760px) {
       .about-wrap { grid-template-columns: 1fr; gap: 28px; }
