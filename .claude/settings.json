@@ -1,4 +1,17 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(vercel --version)",
+      "WebFetch(domain:my-portfolio-three-vert-17.vercel.app)",
+      "Bash(python3 -c \"import paramiko; print\\('ok'\\)\")",
+      "Bash(sort -k6,7)",
+      "Bash(start \"\" \"c:\\\\Users\\\\User\\\\Documents\\\\Projekt\\\\my-first-projekt\\\\my-portfolio\\\\index.html\")",
+      "WebFetch(domain:cdn-edge.kwork.ru)",
+      "Bash(curl -sL -o \"/c/tmp/BrickSpike_Website_Concept_v1.0.pdf\" \"https://cdn-edge.kwork.ru/files/uploaded/3a/8d/ae/ac6af50b66/BrickSpike_Website_Concept_v1.0.pdf\" --max-time 60)",
+      "Skill(firecrawl-parse)",
+      "Skill(firecrawl-parse:*)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -10,11 +23,6 @@
           }
         ]
       }
-    ]
-  },
-  "permissions": {
-    "allow": [
-      "Bash(vercel --version)"
     ]
   }
 }

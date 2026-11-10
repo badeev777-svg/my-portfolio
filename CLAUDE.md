@@ -31,4 +31,4 @@ This project has a graphify knowledge graph at graphify-out/.
 Rules:
 - Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
 - If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
-- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
+- After modifying files in this session, run `/graphify . --update` to keep the graph current. This project is HTML-only (no files in graphify's AST-only `code_exts` list), so the bare `graphify update .` CLI command always reports "No code files found" here — the `/graphify --update` skill pipeline is required, and it will use semantic (LLM) extraction for changed `.html` files instead of free AST re-extraction.
