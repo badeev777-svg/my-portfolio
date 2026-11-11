@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM для риелтора — Александр Бадеев</title>
+  <meta name="description" content="Объекты, клиенты, показы и сделки в одном окне: дашборд, фильтры по статусам, канбан сделок с комиссией. Демо можно открыть прямо сейчас." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #08090e; --bg2: #0f1117; --card: #141620;
+      --accent: #7c6cff; --accent2: #00d4ff;
+      --text: #e8eaf0; --muted: #7a7f96;
+      --border: rgba(124,108,255,.18); --radius: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.65; overflow-x: hidden; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+    .gradient-text { background: linear-gradient(135deg, #7c6cff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: .75rem; font-weight: 600; background: rgba(124,108,255,.12); color: #a49fff; border: 1px solid rgba(124,108,255,.25); margin: 0 8px 8px 0; }
+    header { padding: 20px 0; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(8,9,14,.85); backdrop-filter: blur(10px); z-index: 100; }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .back-link { color: var(--muted); text-decoration: none; font-size: .9rem; }
+    .back-link:hover { color: var(--text); }
+    section { padding: 72px 0; }
+    .alt { background: var(--bg2); }
+    .hero { min-height: 60vh; display: flex; align-items: center; }
+    .project-type { font-size: .85rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent2); margin-bottom: 12px; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 16px; }
+    .subtitle { font-size: 1.15rem; color: var(--muted); max-width: 640px; margin-bottom: 28px; }
+    .tags { display: flex; flex-wrap: wrap; margin-bottom: 32px; }
+    .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: 10px; font-weight: 600; font-size: .95rem; text-decoration: none; transition: transform .22s, box-shadow .22s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: linear-gradient(135deg, #7c6cff, #00d4ff); color: #fff; box-shadow: 0 6px 32px rgba(124,108,255,.35); }
+    .btn-ghost { border: 1px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .section-tag { font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+    .section-title { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
+    .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 640px; }
+    .pain-list { list-style: none; margin-top: 32px; display: grid; gap: 14px; }
+    .pain-list li { background: var(--card); border: 1px solid var(--border); border-left: 3px solid #ff6b8b; border-radius: 10px; padding: 16px 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 36px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; }
+    .card .icon { font-size: 2.2rem; margin-bottom: 12px; }
+    .card h3 { font-size: 1.08rem; font-weight: 700; margin-bottom: 8px; }
+    .card p { font-size: .92rem; color: var(--muted); }
+    .steps { counter-reset: s; margin-top: 36px; display: grid; gap: 16px; }
+    .step { position: relative; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 22px 22px 76px; }
+    .step::before { counter-increment: s; content: counter(s); position: absolute; left: 22px; top: 20px; width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #7c6cff, #00d4ff); display: grid; place-items: center; font-weight: 800; }
+    .step h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .step p { color: var(--muted); font-size: .92rem; }
+    .check-list { list-style: none; margin-top: 28px; display: grid; gap: 12px; }
+    .check-list li { padding-left: 32px; position: relative; }
+    .check-list li::before { content: "✓"; position: absolute; left: 0; color: var(--accent2); font-weight: 800; }
+    .price-box { margin-top: 32px; background: var(--card); border: 1px solid rgba(124,108,255,.4); border-radius: var(--radius); padding: 32px; }
+    .price { font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; }
+    .price-note { color: var(--muted); margin-bottom: 20px; }
+    .cta-box { text-align: center; background: linear-gradient(135deg, rgba(124,108,255,.15), rgba(0,212,255,.08)); border: 1px solid var(--border); border-radius: 20px; padding: 48px 28px; }
+    .cta-box .section-sub { margin: 0 auto 28px; }
+    .cta-box .btns { justify-content: center; }
+    footer { padding: 32px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: .85rem; text-align: center; }
+    @media (max-width: 760px) {
+      section { padding: 52px 0; }
+      .container { padding: 0 16px; }
+      .step { padding: 70px 20px 20px; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container header-inner">
+    <a href="../../index.html#projects" class="back-link">← Вернуться</a>
+    <a href="index.html" class="back-link">Открыть демо →</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="project-type">CRM-система · недвижимость</div>
+    <h1>CRM <span class="gradient-text">для риелтора</span></h1>
+    <p class="subtitle">Объекты, клиенты, показы и сделки — в одном окне, а не в блокноте, Excel и переписке. Открыли утром — сразу видно, кому звонить, что показывать и какая сделка на какой стадии.</p>
+    <div class="tags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">Адаптив</span><span class="tag">Работает в браузере</span></div>
+    <div class="btns">
+      <a href="index.html" class="btn btn-primary">Открыть демо</a>
+      <a href="#cta" class="btn btn-ghost">Хочу такую CRM</a>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="container">
+    <div class="section-tag">Знакомо?</div>
+    <h2 class="section-title">Клиенты и объекты разбросаны по разным местам</h2>
+    <ul class="pain-list">
+      <li>Объекты — в таблице, клиенты — в телефоне, договорённости о показах — в мессенджерах.</li>
+      <li>Покупатель просил «трёшку не выше пятого этажа», а где это записано — уже не найти.</li>
+      <li>Непонятно, какой показ прошёл удачно и кто из клиентов готов к сделке.</li>
+      <li>Сделки на разных стадиях — задаток, ипотека, проверка документов — держатся в голове, и что-то обязательно ускользает.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-tag">Решение</div>
+    <h2 class="section-title">Вся работа риелтора — в пяти разделах</h2>
+    <p class="section-sub">Всё, что ниже, уже работает в демо — можно открыть и попробовать самому.</p>
+    <div class="grid">
+      <div class="card"><div class="icon">📊</div><h3>Дашборд</h3><p>Сколько объектов, клиентов, запланированных показов и сделок в работе. Плюс последние объекты, ближайшие показы и активные сделки.</p></div>
+      <div class="card"><div class="icon">🏢</div><h3>Объекты</h3><p>Адрес, тип (квартира, дом, офис, земля и др.), площадь, цена, этаж, комнаты, описание. Фильтр: свободен, на показе, в сделке, продан.</p></div>
+      <div class="card"><div class="icon">👥</div><h3>Клиенты</h3><p>Покупатели, продавцы, арендаторы и арендодатели: телефон, бюджет, пожелания, заметки и статус — от «нового» до «тёплого» и «завершён».</p></div>
+      <div class="card"><div class="icon">📅</div><h3>Показы</h3><p>Какой объект, кому, дата и время. После показа — результат: понравилось, думает, готов к сделке.</p></div>
+      <div class="card"><div class="icon">💼</div><h3>Сделки</h3><p>Канбан-доска по стадиям: переговоры, проверка документов, задаток, ипотека, сделка. Сумма, комиссия в процентах, комментарий. Можно переключить на таблицу.</p></div>
+      <div class="card"><div class="icon">🔍</div><h3>Поиск</h3><p>Общий поиск по разделам — нужный объект или клиент находится за секунды.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="container">
+    <div class="section-tag">Как это работает</div>
+    <h2 class="section-title">Путь клиента от звонка до сделки</h2>
+    <div class="steps">
+      <div class="step"><h3>Заносите клиента</h3><p>Имя, телефон, бюджет и пожелания — всё в одной карточке.</p></div>
+      <div class="step"><h3>Подбираете объект и назначаете показ</h3><p>Выбираете объект и клиента из списка, ставите дату и время. Показ появляется на дашборде.</p></div>
+      <div class="step"><h3>Отмечаете результат показа</h3><p>Понравилось, не понравилось, думает или готов к сделке — видно, с кем работать дальше.</p></div>
+      <div class="step"><h3>Ведёте сделку по стадиям</h3><p>Переносите карточку по канбану от переговоров до завершения — ни одна сделка не теряется.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-tag">Почему это удобно</div>
+    <h2 class="section-title">Без лишнего — только то, что нужно риелтору</h2>
+    <ul class="check-list">
+      <li>Разделы и статусы взяты из работы риелтора: показы, задаток, ипотека, комиссия.</li>
+      <li>Открывается в браузере — на компьютере и на телефоне.</li>
+      <li>Ничего не нужно устанавливать, чтобы попробовать: демо открывается по одной кнопке.</li>
+      <li>Можно доработать под ваше агентство: свои поля, статусы и разделы.</li>
+    </ul>
+    <p class="section-sub" style="margin-top:20px">Честно: в демо данные хранятся в вашем браузере, на этом устройстве. Общая база для команды, вход по паролю и работа с нескольких устройств — это доработка под заказ, обсуждаем отдельно.</p>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="container">
+    <div class="section-tag">Что получаете</div>
+    <h2 class="section-title">CRM под ваше агентство или под вас лично</h2>
+    <div class="price-box">
+      <div class="price">Цена — под задачу</div>
+      <p class="price-note">Стоимость и срок рассчитаю, когда обсудим, что нужно: какие поля, статусы, сколько человек работает в системе.</p>
+      <ul class="check-list" style="margin-top:0">
+        <li>дашборд, объекты, клиенты, показы, сделки</li>
+        <li>фильтры по статусам и поиск</li>
+        <li>канбан сделок с суммой и комиссией</li>
+        <li>адаптив под телефон</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="container">
+    <div class="cta-box">
+      <h2 class="section-title">Попробуйте демо — и расскажите, что добавить</h2>
+      <p class="section-sub">Напишите мне, как вы сейчас ведёте клиентов и объекты, — предложу, какой будет CRM под вас.</p>
+      <div class="btns">
+        <a href="https://max.ru/u/f9LHodD0cOIRnmiaTLmNbAO_bPk7XetTZURYbnTQTgBeGajyv88HLxyWeT4" class="btn btn-primary" target="_blank" rel="noopener">Написать в МАКС</a>
+        <a href="index.html" class="btn btn-ghost">Открыть демо</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="container">© Александр Бадеев · Badeev Agency</div></footer>
+</body>
+</html>
